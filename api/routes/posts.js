@@ -9,7 +9,6 @@ router.get("/", (req, res, next) => {
 	Post.find()
 		.exec()
 		.then(docs => {
-			console.log(docs)
 			const response = {
 				count: docs.length,
 				post: docs.map(doc => {
@@ -21,9 +20,10 @@ router.get("/", (req, res, next) => {
 						date: doc.date,
 						request: {
 							type: "GET",
-							url: "url goes here"
+							url: "http://" + req.headers.host + "/" + doc._id
 						}
 					};
+					
 				})
 			};
 			if (docs.length > 0) {
@@ -40,8 +40,6 @@ router.get("/", (req, res, next) => {
 			});
 		});
 });
-
-
 
 router.post("/", (req, res, next) => {
 	const post = new Post({
@@ -66,7 +64,7 @@ router.post("/", (req, res, next) => {
 				},
 				request: {
 					type: "GET",
-					url: "url goes here"
+					url: req.headers.host + "/" + result._id
 				}
 			});
 		})
