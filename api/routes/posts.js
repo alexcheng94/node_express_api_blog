@@ -5,6 +5,8 @@ const multer = require("multer");
 
 const Post = require("../models/post");
 
+const http = process.env.NODE_ENV === 'production' ? "https://" : "http://";
+
 router.get("/", (req, res, next) => {
 	Post.find()
 		.exec()
@@ -20,7 +22,7 @@ router.get("/", (req, res, next) => {
 						date: doc.date,
 						request: {
 							type: "GET",
-							url: "https://" + req.headers.host + "/posts/" + doc._id
+							url: http + req.headers.host + "/posts/" + doc._id
 						}
 					};
 					
@@ -64,7 +66,7 @@ router.post("/", (req, res, next) => {
 				},
 				request: {
 					type: "GET",
-					url: req.headers.host + "/posts" + result._id
+					url: http + req.headers.host + "/posts" + result._id
 				}
 			});
 		})
