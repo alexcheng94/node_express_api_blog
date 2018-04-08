@@ -9,6 +9,7 @@ router.get("/", (req, res, next) => {
 	Post.find()
 		.exec()
 		.then(docs => {
+			console.log(docs)
 			const response = {
 				count: docs.length,
 				post: docs.map(doc => {
