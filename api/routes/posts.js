@@ -20,7 +20,7 @@ router.get("/", (req, res, next) => {
 						date: doc.date,
 						request: {
 							type: "GET",
-							url: "http://" + req.headers.host + "/" + doc._id
+							url: "https://" + req.headers.host + "/posts/" + doc._id
 						}
 					};
 					
@@ -64,7 +64,7 @@ router.post("/", (req, res, next) => {
 				},
 				request: {
 					type: "GET",
-					url: req.headers.host + "/" + result._id
+					url: req.headers.host + "/posts" + result._id
 				}
 			});
 		})
