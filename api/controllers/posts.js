@@ -36,6 +36,36 @@ exports.get_all_posts = (req, res, next) => {
 		});
 };
 
+exports.get_one_post = (req, res, next) => {
+	const id = req.params.postId;
+	Post.findById(id)
+		.exec()
+		.then(doc => {
+			if (doc) {
+				res.status(200).json({
+					_id: doc._id,
+					title: doc.title,
+					author: doc.author,
+					content: doc.content,
+					request: {
+						type: "DELETE PATCH",
+						url: req.protocol + "://" + req.headers.host + req.originalUrl
+					}
+				});
+			} else {
+				res.status(404).json({
+					message: "Invalid postId, no matching entry found"
+				});
+			}
+		})
+		.catch(err => {
+			res.status(500).json({
+				error: err
+			});
+		});
+};
+
+//============ protected routes ====================
 exports.post_new_article = (req, res, next) => {
 	const post = new Post({
 		_id: new mongoose.Types.ObjectId(),
@@ -65,35 +95,6 @@ exports.post_new_article = (req, res, next) => {
 		})
 		.catch(err => {
 			console.log(err);
-			res.status(500).json({
-				error: err
-			});
-		});
-};
-
-exports.get_one_post = (req, res, next) => {
-	const id = req.params.postId;
-	Post.findById(id)
-		.exec()
-		.then(doc => {
-			if (doc) {
-				res.status(200).json({
-					_id: doc._id,
-					title: doc.title,
-					author: doc.author,
-					content: doc.content,
-					request: {
-						type: "DELETE PATCH",
-						url: req.protocol + "://" + req.headers.host + req.originalUrl
-					}
-				});
-			} else {
-				res.status(404).json({
-					message: "Invalid postId, no matching entry found"
-				});
-			}
-		})
-		.catch(err => {
 			res.status(500).json({
 				error: err
 			});
@@ -130,24 +131,18 @@ exports.delete_post = (req, res, next) => {
 	id = req.params.postId;
 	Post.remove({ _id: id })
 		.exec()
-		.then(result=>{
+		.then(result => {
 			res.status(200).json({
 				message: "Entry successfully deleted",
 				request: {
 					type: "GET POST",
-					url: req.protocol + "://" + req.headers.host +'/posts'
+					url: req.protocol + "://" + req.headers.host + "/posts"
 				}
-			})
+			});
 		})
-		.catch(err=>{
+		.catch(err => {
 			res.status(500).json({
 				error: err
-			})
+			});
 		});
 };
-
-
-
-
-
-

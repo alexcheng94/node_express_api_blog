@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 //Routes
 const postsRoutes = require("./api/routes/posts");
-
+const userRoutes = require('./api/routes/users');
 
 mongoose.connect(keys.mongoURI, {});
 mongoose.Promise = global.Promise;
@@ -34,6 +34,7 @@ app.use((req, res, next) => {
 
 // Routes to handle requests
 app.use("/posts", postsRoutes);
+app.use("/user", userRoutes);
 
 // Error handling
 app.use((req, res, next) => {
