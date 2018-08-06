@@ -8,6 +8,9 @@ router.get("/", postsController.get_all_posts);
 
 router.get("/:postId", postsController.get_one_post);
 
+//Get a specific user's posts. Repetitive to users route's 'get_user_profile'
+// router.get("/user/:userId", postsController.get_posts_by_user);
+
 //============ protected routes ====================
 router.post("/", checkAuth, postsController.post_new_article);
 

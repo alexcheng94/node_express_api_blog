@@ -35,7 +35,6 @@ exports.user_signup = (req, res, next) => {
             user
               .save()
               .then(result => {
-                console.log(result);
                 res.status(201).json({
                   message: "User sign up successful!"
                 });
@@ -105,19 +104,56 @@ exports.user_login = (req, res) => {
     });
 };
 
-//user delete route
+//User delete route
 exports.user_delete = (req, res, next) => {
-  User.remove({ _id: req.params.userId })
-    .exec()
-    .then(result => {
-      return res.status(200).json({
-        message: "User deleted"
+  const currentUser = req.userData;
+  const requestId = req.params.userId;
+
+  if (currentUser.userId == requestId) {
+    User.remove({ _id: req.params.userId })
+      .exec()
+      .then(result => {
+        return res.status(200).json({
+          message: "User deleted"
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({
+          error: err
+        });
       });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({
-        error: err
-      });
+  } else {
+    res.status(401).json({
+      message: "Unauthorized. You cannot delete other users"
     });
+  }
 };
+
+//Get User Profile Route
+//See http://mongoosejs.com/docs/populate.html (Populate)
+exports.user_profile = (req,res,next)=>{
+  User.findById(req.params.userId)
+  .populate({
+    path: 'posts'
+  })
+  .exec()
+  .then(doc=>{
+    if (doc) {
+      res.status(200).json({
+        _id: doc._id,
+        username: doc.username,
+        posts: doc.posts
+      })
+    }else{
+      res.status(404).json({
+        message: 'Cannot find such user'
+      })
+    }
+  })
+  .catch(err=>{
+    res.status(500).json({
+      error: err
+    })
+  })
+}

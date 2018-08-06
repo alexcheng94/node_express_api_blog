@@ -8,13 +8,8 @@ const userSchema = new Schema({
     required: true,
     unique: true
   },
-  password: { type: String, required: true }
-  // email: {
-  //   type: String,
-  //   required: true,
-  //   unique: true,
-  //   match: //regExp goes here
-  // }
+  password: { type: String, required: true },
+  posts: [{type: Schema.Types.ObjectId, ref: 'Post' }]
 });
 
 module.exports = mongoose.model("User", userSchema);
