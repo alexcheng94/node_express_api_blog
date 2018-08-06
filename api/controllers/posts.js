@@ -1,9 +1,10 @@
 const Post = require("../models/post");
-const User = require('../models/user');
+const User = require("../models/user");
 const mongoose = require("mongoose");
 
 exports.get_all_posts = (req, res, next) => {
   Post.find()
+    .populate("author", "username")
     .exec()
     .then(docs => {
       const response = {
@@ -12,7 +13,7 @@ exports.get_all_posts = (req, res, next) => {
           return {
             _id: doc._id,
             title: doc.title,
-            author: doc.author,
+            author: doc.author.username,
             content: doc.content,
             date: doc.date,
             request: {
@@ -25,29 +26,30 @@ exports.get_all_posts = (req, res, next) => {
       if (docs.length > 0) {
         res.status(200).json(response);
       } else {
-				//200 indicates the request has succeeded, however there is no entry.
+        //200 indicates the request has succeeded, however there is no entry.
         res.status(200).json({
           message: "No entries found"
         });
       }
     })
     .catch(err => {
-			res.status(500).json({
-				error: err
-			});
-		});
+      res.status(500).json({
+        error: err
+      });
+    });
 };
 
 exports.get_one_post = (req, res, next) => {
   const id = req.params.postId;
   Post.findById(id)
+    .populate("author", "username")
     .exec()
     .then(doc => {
       if (doc) {
         res.status(200).json({
           _id: doc._id,
           title: doc.title,
-          author: doc.author,
+          author: doc.author.username,
           content: doc.content,
           request: {
             type: "DELETE PATCH",
@@ -61,10 +63,10 @@ exports.get_one_post = (req, res, next) => {
       }
     })
     .catch(err => {
-			res.status(500).json({
-				error: err
-			});
-		});
+      res.status(500).json({
+        error: err
+      });
+    });
 };
 
 // exports.get_posts_by_user = (req, res, next) => {
@@ -106,12 +108,17 @@ exports.post_new_article = (req, res, next) => {
   post
     .save()
     .then(result => {
-			User.findById(req.userData.userId)
-			.populate('posts')
-			.then(doc=>{
-				doc.posts.push(result);
-				doc.save();
-			})
+      User.findById(req.userData.userId)
+        .populate("posts")
+        .then(doc => {
+          doc.posts.push(result);
+          doc.save();
+        })
+        .catch(err => {
+          res.status(500).json({
+            error: err
+          });
+        });
       res.status(201).json({
         message: "Post successfully created",
         createdPost: {
@@ -128,10 +135,10 @@ exports.post_new_article = (req, res, next) => {
       });
     })
     .catch(err => {
-			res.status(500).json({
-				error: err
-			});
-		});
+      res.status(500).json({
+        error: err
+      });
+    });
 };
 
 exports.update_post = (req, res, next) => {
@@ -157,18 +164,23 @@ exports.update_post = (req, res, next) => {
                 url: req.protocol + "://" + req.headers.host + req.originalUrl
               }
             });
+          })
+          .catch(err=>{
+            res.status(500).json({
+              error: err
+            })
           });
-      }else{
-				res.status(401).json({
-					message: 'Unauthorized. This is not your post'
-				})
-			}
+      } else {
+        res.status(401).json({
+          message: "Unauthorized. This is not your post"
+        });
+      }
     })
     .catch(err => {
-			res.status(500).json({
-				error: err
-			});
-		});
+      res.status(500).json({
+        error: err
+      });
+    });
 };
 
 exports.delete_post = (req, res, next) => {
@@ -182,16 +194,21 @@ exports.delete_post = (req, res, next) => {
           res.status(200).json({
             message: "Entry successfully deleted"
           });
+        })
+        .catch(err=>{
+          res.status(500).json({
+            error: err
+          })
         });
       } else {
         res.status(401).json({
           message: "Unauthorized. This is not your post"
         });
       }
-		})
-		.catch(err => {
-			res.status(500).json({
-				error: err
-			});
-		})
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
 };
