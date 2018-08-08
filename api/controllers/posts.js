@@ -51,6 +51,7 @@ exports.get_one_post = (req, res, next) => {
           title: doc.title,
           author: doc.author.username,
           content: doc.content,
+          date: doc.date,
           request: {
             type: "DELETE PATCH",
             url: req.protocol + "://" + req.headers.host + req.originalUrl
