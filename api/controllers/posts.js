@@ -191,15 +191,17 @@ exports.delete_post = (req, res, next) => {
     .exec()
     .then(doc => {
       if (doc.author == currentUser.userId) {
-        doc.remove().then(result => {
+        doc
+          .remove()
+          .then(result => {
           res.status(200).json({
             message: "Entry successfully deleted"
           });
         })
-        .catch(err=>{
+          .catch(err => {
           res.status(500).json({
             error: err
-          })
+            });
         });
       } else {
         res.status(401).json({

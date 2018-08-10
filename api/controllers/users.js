@@ -51,6 +51,30 @@ exports.user_signup = (req, res, next) => {
     });
 };
 
+//get all usernames
+exports.getAllUsername = (req, res, next) => {
+  console.log("hellerrr");
+  User.find()
+    .exec()
+    .then(docs => {
+      if (docs.length > 0) {
+        res.status(200).json({
+          count: docs.length,
+          usernameList: docs.map(doc => doc.username)
+        });
+      } else {
+        res.status(200).json({
+          message: "Request successful, however there are no users"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
+};
+
 //User login route
 exports.user_login = (req, res) => {
   User.find({ username: req.body.username })
@@ -133,28 +157,28 @@ exports.user_delete = (req, res, next) => {
 
 //Get User Profile Route
 //See http://mongoosejs.com/docs/populate.html (Populate)
-exports.user_profile = (req,res,next)=>{
+exports.user_profile = (req, res, next) => {
   User.findById(req.params.userId)
-  .populate({
-    path: 'posts'
-  })
-  .exec()
-  .then(doc=>{
-    if (doc) {
-      res.status(200).json({
-        _id: doc._id,
-        username: doc.username,
-        posts: doc.posts
-      })
-    }else{
-      res.status(404).json({
-        message: 'Cannot find such user'
-      })
-    }
-  })
-  .catch(err=>{
-    res.status(500).json({
-      error: err
+    .populate({
+      path: "posts"
     })
-  })
-}
+    .exec()
+    .then(doc => {
+      if (doc) {
+        res.status(200).json({
+          _id: doc._id,
+          username: doc.username,
+          posts: doc.posts
+        });
+      } else {
+        res.status(404).json({
+          message: "Cannot find such user"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
+};
