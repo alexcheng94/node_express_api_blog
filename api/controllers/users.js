@@ -170,7 +170,7 @@ exports.user_profile = (req, res, next) => {
       if (doc) {
         //set author to username rather than _id
         const postList = doc.posts.map(post => ({
-          id: post.id,
+          _id: post.id,
           title: post.title,
           author: post.author.username,
           content: post.content,
