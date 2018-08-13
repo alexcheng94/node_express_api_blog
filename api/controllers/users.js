@@ -158,17 +158,28 @@ exports.user_delete = (req, res, next) => {
 //Get User Profile Route
 //See http://mongoosejs.com/docs/populate.html (Populate)
 exports.user_profile = (req, res, next) => {
-  User.findOne({username: req.params.username})
+  User.findOne({ username: req.params.username })
     .populate({
-      path: "posts"
+      path: "posts",
+      populate: {
+        path: "author"
+      }
     })
     .exec()
     .then(doc => {
       if (doc) {
+        //set author to username rather than _id
+        const postList = doc.posts.map(post => ({
+          id: post.id,
+          title: post.title,
+          author: post.author.username,
+          content: post.content,
+          date: post.comtent
+        }));
         res.status(200).json({
           _id: doc._id,
           username: doc.username,
-          posts: doc.posts
+          posts: postList
         });
       } else {
         res.status(404).json({
