@@ -158,7 +158,7 @@ exports.user_delete = (req, res, next) => {
 //Get User Profile Route
 //See http://mongoosejs.com/docs/populate.html (Populate)
 exports.user_profile = (req, res, next) => {
-  User.findById(req.params.userId)
+  User.findOne({username: req.params.username})
     .populate({
       path: "posts"
     })

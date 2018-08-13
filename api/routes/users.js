@@ -5,7 +5,7 @@ const userController = require("../controllers/users");
 const checkAuth = require('../middlewares/check-auth');
 
 //Get user profile
-router.get('/:userId', userController.user_profile)
+router.get('/:username', userController.user_profile)
 
 //get all usernames
 router.get('/all/username', userController.getAllUsername);
