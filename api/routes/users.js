@@ -7,9 +7,6 @@ const checkAuth = require('../middlewares/check-auth');
 //Get user profile
 router.get('/:username', userController.user_profile)
 
-//get all usernames
-router.get('/all/username', userController.getAllUsername);
-
 //User signup route
 router.post("/signup", userController.user_signup);
 

@@ -2,7 +2,7 @@ const Post = require("../models/post");
 const User = require("../models/user");
 const mongoose = require("mongoose");
 
-exports.get_all_posts = (req, res, next) => {
+exports.get_all_posts = (req, res) => {
   Post.find()
     .populate("author", "username")
     .exec()
@@ -39,7 +39,7 @@ exports.get_all_posts = (req, res, next) => {
     });
 };
 
-exports.get_one_post = (req, res, next) => {
+exports.get_one_post = (req, res) => {
   const id = req.params.postId;
   Post.findById(id)
     .populate("author", "username")
@@ -53,7 +53,7 @@ exports.get_one_post = (req, res, next) => {
           content: doc.content,
           date: doc.date,
           request: {
-            type: "DELETE PATCH",
+            type: "GET DELETE PATCH",
             url: req.protocol + "://" + req.headers.host + req.originalUrl
           }
         });
@@ -70,35 +70,10 @@ exports.get_one_post = (req, res, next) => {
     });
 };
 
-// exports.get_posts_by_user = (req, res, next) => {
-//   const { userId } = req.params;
-//   Post.find({ author: userId })
-//     .populate("author")
-//     .exec()
-//     .then(docs => {
-//       res.status(200).json({
-//         count: docs.length,
-//         posts: docs.map(doc => {
-//           return {
-//             _id: doc._id,
-//             title: doc.title,
-//             author: doc.author["username"],
-//             content: doc.content,
-//             date: doc.date
-//           };
-//         })
-//       });
-//     })
-//     .catch(err => {
-// 			res.status(500).json({
-// 				error: err
-// 			});
-// 		});
-// };
 
 //============ protected routes ====================
 
-exports.post_new_article = (req, res, next) => {
+exports.post_new_article = (req, res) => {
   const post = new Post({
     _id: new mongoose.Types.ObjectId(),
     title: req.body.title,
@@ -142,7 +117,7 @@ exports.post_new_article = (req, res, next) => {
     });
 };
 
-exports.update_post = (req, res, next) => {
+exports.update_post = (req, res) => {
   const { postId } = req.params;
   const currentUser = req.userData;
   Post.findById(postId)
@@ -161,7 +136,7 @@ exports.update_post = (req, res, next) => {
             res.status(200).json({
               message: "update SUCCESSFUL",
               request: {
-                type: "GET DELETE",
+                type: "GET DELETE PATCH",
                 url: req.protocol + "://" + req.headers.host + req.originalUrl
               }
             });
@@ -184,7 +159,7 @@ exports.update_post = (req, res, next) => {
     });
 };
 
-exports.delete_post = (req, res, next) => {
+exports.delete_post = (req, res) => {
   const { postId } = req.params;
   const currentUser = req.userData;
   Post.findById(postId)

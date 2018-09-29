@@ -6,7 +6,7 @@ const keys = require("../../config/keys");
 const User = require("../models/user");
 
 //User signup route
-exports.user_signup = (req, res, next) => {
+exports.user_signup = (req, res) => {
   //Check if username already exists
   User.find({ username: req.body.username })
     .exec()
@@ -48,30 +48,6 @@ exports.user_signup = (req, res, next) => {
           }
         });
       }
-    });
-};
-
-//get all usernames
-exports.getAllUsername = (req, res, next) => {
-  console.log("hellerrr");
-  User.find()
-    .exec()
-    .then(docs => {
-      if (docs.length > 0) {
-        res.status(200).json({
-          count: docs.length,
-          usernameList: docs.map(doc => doc.username)
-        });
-      } else {
-        res.status(200).json({
-          message: "Request successful, however there are no users"
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      });
     });
 };
 
@@ -130,7 +106,7 @@ exports.user_login = (req, res) => {
 };
 
 //User delete route
-exports.user_delete = (req, res, next) => {
+exports.user_delete = (req, res) => {
   const currentUser = req.userData;
   const requestId = req.params.userId;
 
@@ -150,14 +126,14 @@ exports.user_delete = (req, res, next) => {
       });
   } else {
     res.status(401).json({
-      message: "Unauthorized. You cannot delete other users"
+      message: "Unauthorized"
     });
   }
 };
 
 //Get User Profile Route
 //See http://mongoosejs.com/docs/populate.html (Populate)
-exports.user_profile = (req, res, next) => {
+exports.user_profile = (req, res) => {
   User.findOne({ username: req.params.username })
     .populate({
       path: "posts",
@@ -174,7 +150,11 @@ exports.user_profile = (req, res, next) => {
           title: post.title,
           author: post.author.username,
           content: post.content,
-          date: post.comtent
+          date: post.comtent,
+          request: {
+            type: "GET DELETE PATCH",
+            url: req.protocol + "://" + req.headers.host + "/posts/" + post._id
+          }
         }));
         res.status(200).json({
           _id: doc._id,
