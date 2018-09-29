@@ -105,32 +105,6 @@ exports.user_login = (req, res) => {
     });
 };
 
-//User delete route
-exports.user_delete = (req, res) => {
-  const currentUser = req.userData;
-  const requestId = req.params.userId;
-
-  if (currentUser.userId == requestId) {
-    User.remove({ _id: req.params.userId })
-      .exec()
-      .then(result => {
-        return res.status(200).json({
-          message: "User deleted"
-        });
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(500).json({
-          error: err
-        });
-      });
-  } else {
-    res.status(401).json({
-      message: "Unauthorized"
-    });
-  }
-};
-
 //Get User Profile Route
 //See http://mongoosejs.com/docs/populate.html (Populate)
 exports.user_profile = (req, res) => {

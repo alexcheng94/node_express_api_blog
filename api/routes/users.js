@@ -13,9 +13,4 @@ router.post("/signup", userController.user_signup);
 //User login route
 router.post("/login", userController.user_login);
 
-//user delete route
-router.delete("/:userId", checkAuth, userController.user_delete);
-
-
-
 module.exports = router;
